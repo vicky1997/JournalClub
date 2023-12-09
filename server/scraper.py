@@ -6,6 +6,7 @@ from datetime import datetime, timedelta, timezone
 import pandas as pd
 import json
 import arxivscraper.arxivscraper as ax
+import os.path
 
 #function to scrape from urls, here we scrape from two websites that deal with cosmochemistry papers
 def scrape (url='https://karmaka.de/?feed=rss2', n_days=7):
@@ -98,7 +99,9 @@ def to_html(df,links=True,filename='table_jc.html'):
     for i in range(len(df2)):
         df2['title'][i] = make_clickable(df2['link'][i],df2['title'][i])
     df2 = df2.drop('link',axis=1)
-    df2.to_html(filename,escape=False)
+    pathdir = os.path.abspath('client')
+    fname = os.path.join(pathdir,filename)
+    df2.to_html(fname,escape=False)
     
 url = 'https://karmaka.de/?feed=rss2'
 df1 = scrape(url,n_days=7)

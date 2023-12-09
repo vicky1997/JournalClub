@@ -6,6 +6,7 @@ from datetime import datetime, timedelta, timezone
 import pandas as pd
 import json
 import arxivscraper.arxivscraper as ax
+import os.path
 
 #function to scrape from urls, here we scrape from two websites that deal with cosmochemistry papers
 def scrape (url='https://karmaka.de/?feed=rss2', n_days=7):
@@ -84,8 +85,10 @@ def to_json(df, filename='jc.json'):
     dict_jc = {titles[0]:0}
     for t in titles:
         dict_jc[t] = 0
+    pathdir = os.path.abspath('server')
+    fname = os.path.join(pathdir,filename)
     # Convert and write JSON object to file
-    with open(filename, "w") as outfile: 
+    with open(fname, "w") as outfile: 
         json.dump(dict_jc, outfile)
 #generate html table for your dataframe
 
@@ -98,7 +101,9 @@ def to_html(df,links=True,filename='table_jc.html'):
     for i in range(len(df2)):
         df2['title'][i] = make_clickable(df2['link'][i],df2['title'][i])
     df2 = df2.drop('link',axis=1)
-    df2.to_html(filename,escape=False)
+    pathdir = os.path.abspath('client')
+    fname = os.path.join(pathdir,filename)
+    df2.to_html(fname,escape=False)
     
 url = 'https://karmaka.de/?feed=rss2'
 df1 = scrape(url,n_days=7)
@@ -118,8 +123,8 @@ df_arxiv = arxivscrape(n_days=7)
 
 df_final = arxiv_merge(df_arxiv,df3)
 print(df_final)
-to_json(df_final,filename='server/jc.json')
-to_html(df_final,filename='client/table_jc.html')
+to_json(df_final)
+to_html(df_final)
 
 
             
